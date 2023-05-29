@@ -65,8 +65,8 @@ class HomeController extends Controller
         $user = User::where('id',$request->id)->first();
         if(!empty($user)){
             $user->first_name = $request->first_name;
-            $user->last_name = $request->last_name;
-            if($request->hasFile('profile_pic')){
+            $user->last_name = !empty($request->last_name) ? $request->last_name : '';
+            if(!empty($request->profile_pic) && $request->hasFile('profile_pic')){
                 $image=$request->file('profile_pic');
                 $image_name= $image->getClientOriginalName();
                 $path='/user_profile/';

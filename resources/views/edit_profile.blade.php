@@ -65,9 +65,17 @@
         $("#editUser").validate({
             rules: {
                 first_name: "required",
+                email:{
+                    required:true,
+                    email:true,
+                }
             },
             messages: {
                 first_name : "*Please enter first name",
+                email : {
+                    required: "*Please enter your email address",
+                    email: "*Please enter valid email address",
+                }
             }
         })
     })
@@ -79,12 +87,18 @@
         }
 
         var formData = new FormData();
-        formData.append('first_name', $("#first_name").val());
-        formData.append('last_name', $("#last_name").val());
-        formData.append('id', $("#id").val());
-        formData.append('_token', "{{ csrf_token() }}");
-        formData.append('profile_pic', $('#profile_pic')[0].files[0]); // Assuming you have a file input with id "fileInput"
-
+        $('#editUser :input').each(function() {
+            var element = $(this);
+            var fieldName = element.attr('name');
+            var fieldType = element.attr('type');
+            if (fieldType === 'file') {
+                var file = element[0].files[0];
+                formData.append(fieldName, file);
+            } else {
+                var fieldValue = element.val();
+                formData.append(fieldName, fieldValue);
+            }
+        });
         $.ajax({
             method: 'POST',
             url: "{{ route('update_profile') }}",
